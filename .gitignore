@@ -1,0 +1,7 @@
+node_modules
+dist
+dist-single
+qa
+photos/originals
+.DS_Store
+.vercel

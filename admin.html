@@ -1,0 +1,1086 @@
+<!doctype html>
+<html lang="km">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ផ្ទាំងគ្រប់គ្រងធៀបការ · Wedding Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Moul&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/admin/admin.css" />
+  </head>
+  <body>
+    <!-- Top Header -->
+    <header class="adm-header">
+      <div class="adm-header-inner">
+        <div class="adm-brand">
+          <div class="adm-brand-icon">💍</div>
+          <div>
+            <h1 class="adm-title">ផ្ទាំងគ្រប់គ្រងធៀបការឌីជីថល</h1>
+            <p class="adm-sub">Digital Wedding Invitation Admin & Guest Manager</p>
+          </div>
+        </div>
+        <div class="adm-actions">
+          <button class="btn btn-secondary" id="btnOpenLivePreview" type="button">📱 Live Preview</button>
+          <a class="btn btn-secondary" href="/" target="_blank" rel="noopener">👁️ មើលធៀបការ (View Site)</a>
+          <button class="btn btn-outline" id="btnExportConfig" type="button">📥 ទាញយក wedding.js</button>
+          <button class="btn btn-outline" id="btnChangePassword" type="button">🔑 ប្តូរពាក្យសម្ងាត់</button>
+          <button class="btn btn-primary" id="btnSaveAll" type="button">💾 រក្សាទុក (Save)</button>
+          <button class="btn btn-danger btn-sm" id="btnLogout" type="button" title="ចាកចេញ (Logout)">🔒 ចាកចេញ</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="adm-tabs">
+      <div class="adm-tabs-inner">
+        <button class="tab-btn is-active" data-tab="guests" type="button">
+          👥 បញ្ជីឈ្មោះភ្ញៀវ & តំណភ្ជាប់ <span class="badge" id="badgeGuestCount">0</span>
+        </button>
+        <button class="tab-btn" data-tab="couple" type="button">💍 ព័ត៌មានកូនកំលោះ-កូនក្រមុំ</button>
+        <button class="tab-btn" data-tab="date-venue" type="button">📅 កាលបរិច្ឆេទ & ទីតាំង</button>
+        <button class="tab-btn" data-tab="programme" type="button">⏰ កម្មវិធីពិធី (Programme)</button>
+        <button class="tab-btn" data-tab="story" type="button">💖 ដំណើរស្នេហា (Love Story)</button>
+        <button class="tab-btn" data-tab="gifts" type="button">🎁 ចំណងដៃ (Gift QR)</button>
+        <button class="tab-btn" data-tab="photos" type="button">📸 រូបថត & គំរូ (Photos & Preview)</button>
+        <button class="tab-btn" data-tab="palette" type="button">🎨 ពណ៌ចម្រុះ (Palette)</button>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="adm-main">
+      <!-- ── TAB 1: GUESTS ───────────────────────────────────────── -->
+      <section class="tab-panel is-active" id="tab-guests">
+        <!-- Stats Summary -->
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-icon">👥</div>
+            <div>
+              <div class="stat-val" id="statTotalGuests">0</div>
+              <div class="stat-lbl">ភ្ញៀវសរុប (Guests)</div>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">🎟️</div>
+            <div>
+              <div class="stat-val" id="statTotalPax">0</div>
+              <div class="stat-lbl">កៅអីសរុប (Total Seats)</div>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">⭐</div>
+            <div>
+              <div class="stat-val" id="statTotalVip">0</div>
+              <div class="stat-lbl">ភ្ញៀវ VIP</div>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">🪑</div>
+            <div>
+              <div class="stat-val" id="statTotalTables">0</div>
+              <div class="stat-lbl">ចំនួនតុ (Tables)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls Bar -->
+        <div class="guest-controls">
+          <div class="filter-group">
+            <button class="filter-btn is-active" data-group="all" type="button">ទាំងអស់ (All)</button>
+            <button class="filter-btn" data-group="VIP" type="button">⭐ VIP</button>
+            <button class="filter-btn" data-group="សាច់ញាតិ" type="button">👨‍👩‍👧‍👦 សាច់ញាតិ</button>
+            <button class="filter-btn" data-group="មិត្តភក្តិ" type="button">🤝 មិត្តភក្តិ</button>
+            <button class="filter-btn" data-group="រួមការងារ" type="button">💼 រួមការងារ</button>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap: wrap; align-items:center;">
+            <div style="display:flex; align-items:center; gap:0.35rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); padding:3px 8px; border-radius:8px;">
+              <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">🔗 Link:</span>
+              <button class="btn btn-sm btn-primary" id="btnLinkStyleId" type="button" style="font-size:0.74rem; padding:2px 7px;">🆔 តាម ID (ខ្លី: /?id=1)</button>
+              <button class="btn btn-sm btn-secondary" id="btnLinkStyleName" type="button" style="font-size:0.74rem; padding:2px 7px;">🏷️ តាមឈ្មោះ (/?to=...)</button>
+            </div>
+            <input class="form-input search-input" id="guestSearch" placeholder="🔍 ស្វែងរកឈ្មោះ, ID ឬលេខតុ..." />
+            <button class="btn btn-secondary btn-sm" id="btnExportExcel" type="button" style="border-color:#10b981; color:#34d399; font-weight:600;">📊 Export Excel</button>
+            <button class="btn btn-secondary btn-sm" id="btnExportPdf" type="button" style="border-color:#f43f5e; color:#fb7185; font-weight:600;">📄 Export PDF</button>
+            <button class="btn btn-secondary btn-sm" id="btnExportCsv" type="button">📥 CSV</button>
+            <button class="btn btn-secondary btn-sm" id="btnBulkImport" type="button">📋 Paste Multiple</button>
+            <button class="btn btn-primary btn-sm" id="btnAddGuest" type="button">➕ បន្ថែមភ្ញៀវ</button>
+          </div>
+        </div>
+
+        <!-- Default Guest Honorific Setting -->
+        <div class="card" style="margin-bottom: 1.25rem; padding: 0.9rem 1.1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
+            <div style="flex:1; min-width: 260px;">
+              <label class="form-label" style="margin-bottom: 0.2rem;">🏷️ ងារ/ឈ្មោះភ្ញៀវលំនាំដើម (Default Guest Honorific Title)</label>
+              <div class="form-hint" style="margin-bottom: 0.4rem;">បង្ហាញលើធៀបខាងមុខ និងកាតខាងក្នុង នៅពេលភ្ញៀវបើក Link ទូទៅដែលគ្មាន ?to=... ឬ ?id=... (បង្ហាញទាំងលើរូបទី១ និងទី២)</div>
+              <input class="form-input" id="w_default_guest" placeholder="ឯកឧត្តម លោកជំទាវ លោក លោកស្រី អ្នកនាងកញ្ញា" />
+            </div>
+            <button class="btn btn-secondary btn-sm" id="btnUpdateDefaultGuest" type="button" style="align-self: flex-end; margin-bottom: 2px;">💾 រក្សាទុក</button>
+          </div>
+        </div>
+
+        <!-- Guest Table -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 40px;">#</th>
+                <th style="width: 90px;">ID ភ្ញៀវ</th>
+                <th>ឈ្មោះភ្ញៀវ (Name)</th>
+                <th>ក្រុម (Group)</th>
+                <th>តុ (Table)</th>
+                <th>កៅអី (Pax)</th>
+                <th>តំណភ្ជាប់ផ្ទាល់ខ្លួន (Personal Link & Actions)</th>
+              </tr>
+            </thead>
+            <tbody id="guestTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── TAB 2: COUPLE & PARENTS ─────────────────────────────── -->
+      <section class="tab-panel" id="tab-couple">
+        <div class="grid-2">
+          <!-- Groom -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><span class="card-title-icon">🤵</span> ព័ត៌មានកូនកំលោះ (Groom)</h3>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះពេញ (Khmer Full Name)</label>
+              <input class="form-input" id="w_groom_km" placeholder="ឧ. ជិន ឡុងហាក់" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះឡាតាំង (English Full Name)</label>
+              <input class="form-input" id="w_groom_en" placeholder="ឧ. Chin Longak" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះខ្លីលើឡូហ្គោ (Logo / Monogram Short Name)</label>
+              <input class="form-input" id="w_groom_logo" placeholder="ឧ. ឡុងហាក់" />
+            </div>
+          </div>
+
+          <!-- Bride -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><span class="card-title-icon">👰</span> ព័ត៌មានកូនក្រមុំ (Bride)</h3>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះពេញ (Khmer Full Name)</label>
+              <input class="form-input" id="w_bride_km" placeholder="ឧ. ជា សុគន្ធា" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះឡាតាំង (English Full Name)</label>
+              <input class="form-input" id="w_bride_en" placeholder="ឧ. Sokunthea Chea" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះខ្លីលើឡូហ្គោ (Logo / Monogram Short Name)</label>
+              <input class="form-input" id="w_bride_logo" placeholder="ឧ. សុគន្ធា" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Parents -->
+        <div class="grid-2" style="margin-top: 1.25rem;">
+          <!-- Groom Parents -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">មាតាបិតាកូនកំលោះ (Groom Parents)</h3>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះឪពុក (Khmer)</label>
+              <input class="form-input" id="w_groom_father_km" placeholder="ឧ. អ៊ួច គីមលី" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះឪពុក (English)</label>
+              <input class="form-input" id="w_groom_father_en" placeholder="ឧ. Ouch Kimly" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះម្តាយ (Khmer)</label>
+              <input class="form-input" id="w_groom_mother_km" placeholder="ឧ. សម នាង" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះម្តាយ (English)</label>
+              <input class="form-input" id="w_groom_mother_en" placeholder="ឧ. Sam Neang" />
+            </div>
+          </div>
+
+          <!-- Bride Parents -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">មាតាបិតាកូនក្រមុំ (Bride Parents)</h3>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះឪពុក (Khmer)</label>
+              <input class="form-input" id="w_bride_father_km" placeholder="ឧ. ជា រិទ្ធី" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះឪពុក (English)</label>
+              <input class="form-input" id="w_bride_father_en" placeholder="ឧ. Rithy Chea" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះម្តាយ (Khmer)</label>
+              <input class="form-input" id="w_bride_mother_km" placeholder="ឧ. អ៊ុំ ម៉ាលី" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះម្តាយ (English)</label>
+              <input class="form-input" id="w_bride_mother_en" placeholder="ឧ. Maly Oum" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TAB 3: DATE & VENUE ─────────────────────────────────── -->
+      <section class="tab-panel" id="tab-date-venue">
+        <div class="grid-2">
+          <!-- Date -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><span class="card-title-icon">📅</span> កាលបរិច្ឆេទមង្គលការ (Wedding Date)</h3>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ថ្ងៃខែឆ្នាំ និងម៉ោងចាប់ផ្តើម (Date & Start Time)</label>
+              <input class="form-input" id="w_date_iso" type="datetime-local" />
+              <div class="form-hint">កាលបរិច្ឆេទនេះនឹងបញ្ជាមុខងាររាប់ថយក្រោយ (Countdown) និងប្រតិទិនដោយស្វ័យប្រវត្តិ។</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ថ្ងៃខែឆ្នាំតាមចន្ទគតិ (Khmer Lunar Date)</label>
+              <input class="form-input" id="w_lunar_km" placeholder="ត្រូវនឹង ថ្ងៃសៅរ៍ ៩កើត ខែបុស្ស ឆ្នាំរោង..." />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Lunar Date (English)</label>
+              <input class="form-input" id="w_lunar_en" placeholder="e.g. 9th Waxing Moon of Pusya..." />
+            </div>
+          </div>
+
+          <!-- Venue -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><span class="card-title-icon">📍</span> ទីតាំងប្រារព្ធពិធី (Venue & Map)</h3>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឈ្មោះទីកន្លែង (Venue Name - Khmer)</label>
+              <input class="form-input" id="w_venue_name_km" placeholder="ឧ. មជ្ឈមណ្ឌលសន្និបាត និងពិព័រណ៍កោះពេជ្រ" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Venue Name (English)</label>
+              <input class="form-input" id="w_venue_name_en" placeholder="e.g. Koh Pich Convention Center" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">អាសយដ្ឋាន (Address - Khmer)</label>
+              <input class="form-input" id="w_venue_addr_km" placeholder="ឧ. អគារ G, ទីក្រុងកោះពេជ្រ, រាជធានីភ្នំពេញ" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Address (English)</label>
+              <input class="form-input" id="w_venue_addr_en" placeholder="Building G, Koh Pich, Phnom Penh" />
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Latitude (រយៈទទឹង)</label>
+                <input class="form-input" id="w_venue_lat" placeholder="11.5542" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Longitude (រយៈបណ្តោយ)</label>
+                <input class="form-input" id="w_venue_lng" placeholder="104.9385" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Music & Link -->
+        <div class="card" style="margin-top: 1.25rem;">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-title-icon">🎵</span> តន្ត្រី & បទភ្លេងការ (Wedding Background Music)</h3>
+          </div>
+
+          <!-- Upload Dropzone / Box for MP3 -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 2px dashed rgba(59, 130, 246, 0.45); border-radius: 12px; padding: 1.4rem; text-align: center; margin-bottom: 1.25rem;">
+            <input type="file" id="music_file_input" accept="audio/*,.mp3,.m4a,.wav,.ogg" style="display:none;" />
+            <div style="font-size: 2.2rem; margin-bottom: 0.4rem;">🎶</div>
+            <h4 style="margin: 0 0 0.35rem; color: #fff; font-size: 1.05rem;">បង្ហោះឯកសារតន្ត្រី MP3 (Upload Wedding MP3)</h4>
+            <p style="margin: 0 0 1rem; color: var(--text-muted); font-size: 0.85rem;">ជ្រើសរើសបទចម្រៀង MP3, M4A, WAV។ បទចម្រៀងនឹងបន្លឺឡើងដោយស្វ័យប្រវត្តិកាលណាភ្ញៀវចុចបើកស្រោមសំបុត្រ!</p>
+            <div style="display:flex; justify-content:center; gap:0.6rem; flex-wrap:wrap; align-items:center;">
+              <button class="btn btn-primary" id="btnUploadMusic" type="button" style="font-weight:600; padding: 0.65rem 1.5rem;">
+                📁 ជ្រើសរើសឯកសារ MP3 ពីកុំព្យូទ័រ
+              </button>
+              <button class="btn btn-danger btn-sm" id="btnClearMusic" type="button" style="display:none;">
+                🗑️ លុបបទចម្រៀង
+              </button>
+            </div>
+            <div id="musicUploadStatus" style="margin-top:0.75rem; font-size:0.85rem; color:#38bdf8; display:none;"></div>
+          </div>
+
+          <!-- Audio Player Preview Box -->
+          <div id="musicPlayerWrap" style="display:none; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem; flex-wrap:wrap; gap:0.5rem;">
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span style="font-size:1.1rem;">🔊</span>
+                <span style="font-size:0.9rem; font-weight:700; color:#38bdf8;">បទចម្រៀងបច្ចុប្បន្ន (Current Audio Preview):</span>
+              </div>
+              <span id="musicFileNameBadge" style="font-size:0.8rem; background:rgba(59,130,246,0.15); color:#93c5fd; padding:3px 10px; border-radius:12px; border:1px solid rgba(59,130,246,0.3);"></span>
+            </div>
+            <audio id="adminAudioPreview" controls style="width:100%; height:40px; outline:none;"></audio>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">ផ្លូវឯកសារតន្ត្រី MP3 (Music URL or Path)</label>
+              <div style="display:flex; gap:0.4rem; align-items:center;">
+                <input class="form-input" id="w_music" placeholder="/uploads/our-song.mp3 ឬ URL" />
+                <button class="btn btn-secondary btn-sm" id="btnUploadMusicInline" type="button" style="white-space:nowrap; padding:6px 12px; font-weight:600; border-color:#38bdf8; color:#38bdf8;" title="ជ្រើសរើសឯកសារ MP3">
+                  📁 Upload MP3
+                </button>
+              </div>
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">តំណភ្ជាប់ Live Website URL</label>
+              <input class="form-input" id="w_site_url" placeholder="https://your-wedding.vercel.app" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TAB 4: PROGRAMME ───────────────────────────────────── -->
+      <section class="tab-panel" id="tab-programme">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <div>
+            <h3 style="margin:0; font-size:1.1rem; color:#fff;">កម្មវិធីតាមពេលវេលា (Ceremonies Timeline)</h3>
+            <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">កំណត់ម៉ោង និងពិធីតាមលំដាប់លំដោយ</p>
+          </div>
+          <button class="btn btn-primary" id="btnAddProg" type="button">➕ បន្ថែមពិធី (Add Ceremony)</button>
+        </div>
+        <div id="programmeEditor"></div>
+      </section>
+
+      <!-- ── TAB 5: STORY ───────────────────────────────────────── -->
+      <section class="tab-panel" id="tab-story">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <div>
+            <h3 style="margin:0; font-size:1.1rem; color:#fff;">ដំណើរស្នេហា (Love Story Timeline)</h3>
+            <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">ចំណងជើងរឿងរ៉ាវ និងឈ្មោះរូបថត</p>
+          </div>
+          <button class="btn btn-primary" id="btnAddStory" type="button">➕ បន្ថែមវគ្គ (Add Story)</button>
+        </div>
+        <div id="storyEditor"></div>
+      </section>
+
+      <!-- ── TAB 6: GIFTS / QR ──────────────────────────────────── -->
+      <section class="tab-panel" id="tab-gifts">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+          <div>
+            <h3 style="margin:0; font-size:1.1rem; color:#fff;">ចំណងដៃ & QR Codes ធនាគារ</h3>
+            <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">ដាក់រូបភាព QR ក្នុងថត public/gifts/ ឬ Upload រួចបញ្ចូលព័ត៌មានខាងក្រោម</p>
+          </div>
+          <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" id="btnAddBrideGift" type="button" style="border-color:#ec4899; color:#f472b6;">👰 + QR កូនក្រមុំ (Bride)</button>
+            <button class="btn btn-secondary btn-sm" id="btnAddGroomGift" type="button" style="border-color:#eab308; color:#facc15;">🤵 + QR កូនកំលោះ (Groom)</button>
+            <button class="btn btn-primary" id="btnAddGift" type="button">➕ បន្ថែម QR Code</button>
+          </div>
+        </div>
+        <div id="giftEditor"></div>
+      </section>
+
+      <!-- ── TAB 7: PALETTE ─────────────────────────────────────── -->
+      <section class="tab-panel" id="tab-palette">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">ពណ៌ប្រធានបទ (Color Palette)</h3>
+          </div>
+          <div class="grid-3">
+            <div class="form-group">
+              <label class="form-label">ពណ៌ស្រោមសំបុត្រ (Paper Color)</label>
+              <div class="input-group">
+                <input class="form-input" id="w_pal_paper" type="color" style="height:42px; padding:2px; width:60px;" />
+                <input class="form-input" id="w_pal_paper_txt" value="#4b5130" onchange="document.getElementById('w_pal_paper').value = this.value" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ពណ៌កាតសំបុត្រ (Cream Card)</label>
+              <div class="input-group">
+                <input class="form-input" id="w_pal_cream" type="color" style="height:42px; padding:2px; width:60px;" />
+                <input class="form-input" id="w_pal_cream_txt" value="#efe3c7" onchange="document.getElementById('w_pal_cream').value = this.value" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ពណ៌អក្សរផ្ទៃងងឹត (Ink / Background)</label>
+              <div class="input-group">
+                <input class="form-input" id="w_pal_ink" type="color" style="height:42px; padding:2px; width:60px;" />
+                <input class="form-input" id="w_pal_ink_txt" value="#15140e" onchange="document.getElementById('w_pal_ink').value = this.value" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TAB 8: PHOTOS & LIVE PREVIEW ───────────────────────── -->
+      <section class="tab-panel" id="tab-photos">
+        <!-- Photo Actions Bar -->
+        <div class="photo-hero">
+          <div class="photo-hero-info">
+            <h3 class="photo-hero-title">📸 ការគ្រប់គ្រងរូបថត & មើលគំរូជាក់ស្តែង (Photos & Live Sample Preview)</h3>
+            <p class="photo-hero-desc">អ្នកអាច Upload រូបថតមង្គលការជាក់ស្តែង ឬសាកល្បងជាមួយរូបគំរូ (Sample Photos)។ រូបភាពដែលបានជ្រើសរើសនឹងបង្ហាញផ្ទាល់នៅលើទូរស័ព្ទគំរូខាងក្រោម!</p>
+          </div>
+          <div class="photo-hero-actions">
+            <button class="btn btn-primary" id="btnLoadSamplePhotos" type="button">⚡ ដាក់រូបគំរូសាកល្បង (Load Sample Photos)</button>
+            <button class="btn btn-secondary" id="btnScrollToPreview" type="button">📱 មើល Live Preview</button>
+            <button class="btn btn-danger" id="btnClearAllPhotos" type="button">🗑️ សម្អាតរូបទាំងអស់</button>
+          </div>
+        </div>
+
+        <!-- Quick Upload Dropzone for Any Sample Photo -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-title-icon">📤</span> បង្ហោះរូបថតគំរូរហ័ស (Upload Sample Photo for Instant Preview)</h3>
+          </div>
+          <div class="quick-upload-zone" id="quickDropzone">
+            <input type="file" id="quickFileInput" accept="image/*" style="display:none;" />
+            <div class="quz-icon">🖼️</div>
+            <div class="quz-text">
+              <strong>ចុចទីនេះ ឬទម្លាក់រូបថតចូល (Drag & Drop or Click to Upload)</strong>
+              <span>គាំទ្រឯកសារ JPG, PNG, WEBP, GIF (ទំហំរហូតដល់ 15MB)</span>
+            </div>
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('quickFileInput').click()">📁 ជ្រើសរើសរូបភាពពីកុំព្យូទ័រ</button>
+          </div>
+          <!-- Quick Assignment Row (shows after selecting photo) -->
+          <div class="quick-assign-bar" id="quickAssignBar" style="display:none;">
+            <div class="qab-preview">
+              <img id="quickPreviewImg" alt="Preview" />
+              <div id="quickFileName" class="qab-name"></div>
+            </div>
+            <div class="qab-actions">
+              <span class="qab-label">ជ្រើសរើសកន្លែងដាក់រូបនេះ៖</span>
+              <button class="btn btn-sm btn-primary" type="button" data-assign="cover">🌟 Cover & Envelope</button>
+              <button class="btn btn-sm btn-secondary" type="button" data-assign="groom">🤵 កូនកំលោះ</button>
+              <button class="btn btn-sm btn-secondary" type="button" data-assign="bride">👰 កូនក្រមុំ</button>
+              <button class="btn btn-sm btn-secondary" type="button" data-assign="invitation">📜 ធៀបអញ្ជើញ</button>
+              <button class="btn btn-sm btn-secondary" type="button" data-assign="candle">🕯️ រាត្រី/ទៀន</button>
+              <button class="btn btn-sm btn-secondary" type="button" data-assign="thanks">🙏 ថ្លែងអំណរគុណ</button>
+              <button class="btn btn-sm btn-secondary" type="button" data-assign="gallery">🖼️ បន្ថែមក្នុង Gallery</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo Positions Grid -->
+        <div class="photo-grid">
+          <!-- 1. Cover & Envelope -->
+          <div class="photo-card" data-key="cover">
+            <div class="pc-header">
+              <div class="pc-title">🌟 Cover & Envelope Background</div>
+              <span class="badge badge-pos">ផ្ទៃធៀប & Envelope</span>
+            </div>
+            <div class="pc-preview-wrap">
+              <div class="pc-thumb" id="thumb_cover"></div>
+            </div>
+            <div class="photo-adjust-box" id="adjust_box_cover">
+              <div class="pab-header">
+                <span class="pab-title">📐 តម្រឹមទីតាំង (Position)</span>
+                <button type="button" class="btn btn-secondary btn-xs btn-pab-center" onclick="centerPhoto('cover')" title="កំណត់ទៅកណ្តាល">🎯 កណ្តាល (Center)</button>
+              </div>
+              <div class="pab-controls">
+                <div class="pab-dpad">
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('cover', 0, -5)" title="ឡើងលើ (Up)">⬆️</button>
+                  <div class="pab-dpad-mid">
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('cover', -5, 0)" title="ទៅឆ្វេង (Left)">⬅️</button>
+                    <button type="button" class="btn-dpad btn-dpad-center" onclick="centerPhoto('cover')" title="កណ្តាល (Center)">🎯</button>
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('cover', 5, 0)" title="ទៅស្តាំ (Right)">➡️</button>
+                  </div>
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('cover', 0, 5)" title="ចុះក្រោម (Down)">⬇️</button>
+                </div>
+                <div class="pab-sliders">
+                  <div class="pab-row">
+                    <span class="pab-lbl">↕️ លើ/ក្រោម:</span>
+                    <input type="range" class="pab-range" id="slider_y_cover" min="0" max="100" value="50" oninput="onPhotoSliderChange('cover', 'y', this.value)" />
+                    <span class="pab-num" id="val_y_cover">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">↔️ ឆ្វេង/ស្តាំ:</span>
+                    <input type="range" class="pab-range" id="slider_x_cover" min="0" max="100" value="50" oninput="onPhotoSliderChange('cover', 'x', this.value)" />
+                    <span class="pab-num" id="val_x_cover">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">🔍 Zoom:</span>
+                    <input type="range" class="pab-range" id="slider_scale_cover" min="10" max="25" value="10" oninput="onPhotoSliderChange('cover', 'scale', this.value / 10)" />
+                    <span class="pab-num" id="val_scale_cover">1.0x</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pc-desc">រូបភាពផ្ទាំងធៀបធំពេញអេក្រង់ និងផ្ទៃព្រិលក្រោយស្រោមសំបុត្រ (16:9 / 4:3)</div>
+            <div class="pc-actions">
+              <input type="file" id="file_cover" accept="image/*" style="display:none;" />
+              <button class="btn btn-secondary btn-sm" type="button" onclick="document.getElementById('file_cover').click()">📤 Upload</button>
+              <button class="btn btn-danger btn-sm" type="button" onclick="removePhoto('cover')">🗑️</button>
+            </div>
+          </div>
+
+          <!-- 2. Groom Portrait -->
+          <div class="photo-card" data-key="groom">
+            <div class="pc-header">
+              <div class="pc-title">🤵 រូបកូនកំលោះ (Groom)</div>
+              <span class="badge badge-pos">Couple Section</span>
+            </div>
+            <div class="pc-preview-wrap">
+              <div class="pc-thumb pc-thumb--circle" id="thumb_groom"></div>
+            </div>
+            <div class="photo-adjust-box" id="adjust_box_groom">
+              <div class="pab-header">
+                <span class="pab-title">📐 តម្រឹមទីតាំង (Position)</span>
+                <button type="button" class="btn btn-secondary btn-xs btn-pab-center" onclick="centerPhoto('groom')" title="កំណត់ទៅកណ្តាល">🎯 កណ្តាល (Center)</button>
+              </div>
+              <div class="pab-controls">
+                <div class="pab-dpad">
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('groom', 0, -5)" title="ឡើងលើ (Up)">⬆️</button>
+                  <div class="pab-dpad-mid">
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('groom', -5, 0)" title="ទៅឆ្វេង (Left)">⬅️</button>
+                    <button type="button" class="btn-dpad btn-dpad-center" onclick="centerPhoto('groom')" title="កណ្តាល (Center)">🎯</button>
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('groom', 5, 0)" title="ទៅស្តាំ (Right)">➡️</button>
+                  </div>
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('groom', 0, 5)" title="ចុះក្រោម (Down)">⬇️</button>
+                </div>
+                <div class="pab-sliders">
+                  <div class="pab-row">
+                    <span class="pab-lbl">↕️ លើ/ក្រោម:</span>
+                    <input type="range" class="pab-range" id="slider_y_groom" min="0" max="100" value="50" oninput="onPhotoSliderChange('groom', 'y', this.value)" />
+                    <span class="pab-num" id="val_y_groom">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">↔️ ឆ្វេង/ស្តាំ:</span>
+                    <input type="range" class="pab-range" id="slider_x_groom" min="0" max="100" value="50" oninput="onPhotoSliderChange('groom', 'x', this.value)" />
+                    <span class="pab-num" id="val_x_groom">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">🔍 Zoom:</span>
+                    <input type="range" class="pab-range" id="slider_scale_groom" min="10" max="25" value="10" oninput="onPhotoSliderChange('groom', 'scale', this.value / 10)" />
+                    <span class="pab-num" id="val_scale_groom">1.0x</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pc-desc">រូបថតកូនកំលោះក្នុងរង្វង់ក្បាច់រលកផ្កា (Square 1:1 ឬ Portrait)</div>
+            <div class="pc-actions">
+              <input type="file" id="file_groom" accept="image/*" style="display:none;" />
+              <button class="btn btn-secondary btn-sm" type="button" onclick="document.getElementById('file_groom').click()">📤 Upload</button>
+              <button class="btn btn-danger btn-sm" type="button" onclick="removePhoto('groom')">🗑️</button>
+            </div>
+          </div>
+
+          <!-- 3. Bride Portrait -->
+          <div class="photo-card" data-key="bride">
+            <div class="pc-header">
+              <div class="pc-title">👰 រូបកូនក្រមុំ (Bride)</div>
+              <span class="badge badge-pos">Couple Section</span>
+            </div>
+            <div class="pc-preview-wrap">
+              <div class="pc-thumb pc-thumb--circle" id="thumb_bride"></div>
+            </div>
+            <div class="photo-adjust-box" id="adjust_box_bride">
+              <div class="pab-header">
+                <span class="pab-title">📐 តម្រឹមទីតាំង (Position)</span>
+                <button type="button" class="btn btn-secondary btn-xs btn-pab-center" onclick="centerPhoto('bride')" title="កំណត់ទៅកណ្តាល">🎯 កណ្តាល (Center)</button>
+              </div>
+              <div class="pab-controls">
+                <div class="pab-dpad">
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('bride', 0, -5)" title="ឡើងលើ (Up)">⬆️</button>
+                  <div class="pab-dpad-mid">
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('bride', -5, 0)" title="ទៅឆ្វេង (Left)">⬅️</button>
+                    <button type="button" class="btn-dpad btn-dpad-center" onclick="centerPhoto('bride')" title="កណ្តាល (Center)">🎯</button>
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('bride', 5, 0)" title="ទៅស្តាំ (Right)">➡️</button>
+                  </div>
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('bride', 0, 5)" title="ចុះក្រោម (Down)">⬇️</button>
+                </div>
+                <div class="pab-sliders">
+                  <div class="pab-row">
+                    <span class="pab-lbl">↕️ លើ/ក្រោម:</span>
+                    <input type="range" class="pab-range" id="slider_y_bride" min="0" max="100" value="50" oninput="onPhotoSliderChange('bride', 'y', this.value)" />
+                    <span class="pab-num" id="val_y_bride">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">↔️ ឆ្វេង/ស្តាំ:</span>
+                    <input type="range" class="pab-range" id="slider_x_bride" min="0" max="100" value="50" oninput="onPhotoSliderChange('bride', 'x', this.value)" />
+                    <span class="pab-num" id="val_x_bride">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">🔍 Zoom:</span>
+                    <input type="range" class="pab-range" id="slider_scale_bride" min="10" max="25" value="10" oninput="onPhotoSliderChange('bride', 'scale', this.value / 10)" />
+                    <span class="pab-num" id="val_scale_bride">1.0x</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pc-desc">រូបថតកូនក្រមុំក្នុងរង្វង់ក្បាច់រលកផ្កា (Square 1:1 ឬ Portrait)</div>
+            <div class="pc-actions">
+              <input type="file" id="file_bride" accept="image/*" style="display:none;" />
+              <button class="btn btn-secondary btn-sm" type="button" onclick="document.getElementById('file_bride').click()">📤 Upload</button>
+              <button class="btn btn-danger btn-sm" type="button" onclick="removePhoto('bride')">🗑️</button>
+            </div>
+          </div>
+
+          <!-- 4. Invitation Arch -->
+          <div class="photo-card" data-key="invitation">
+            <div class="pc-header">
+              <div class="pc-title">📜 ធៀបអញ្ជើញ (Invitation Arch)</div>
+              <span class="badge badge-pos">Parents & Letter</span>
+            </div>
+            <div class="pc-preview-wrap">
+              <div class="pc-thumb pc-thumb--arch" id="thumb_invitation"></div>
+            </div>
+            <div class="photo-adjust-box" id="adjust_box_invitation">
+              <div class="pab-header">
+                <span class="pab-title">📐 តម្រឹមទីតាំង (Position)</span>
+                <button type="button" class="btn btn-secondary btn-xs btn-pab-center" onclick="centerPhoto('invitation')" title="កំណត់ទៅកណ្តាល">🎯 កណ្តាល (Center)</button>
+              </div>
+              <div class="pab-controls">
+                <div class="pab-dpad">
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('invitation', 0, -5)" title="ឡើងលើ (Up)">⬆️</button>
+                  <div class="pab-dpad-mid">
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('invitation', -5, 0)" title="ទៅឆ្វេង (Left)">⬅️</button>
+                    <button type="button" class="btn-dpad btn-dpad-center" onclick="centerPhoto('invitation')" title="កណ្តាល (Center)">🎯</button>
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('invitation', 5, 0)" title="ទៅស្តាំ (Right)">➡️</button>
+                  </div>
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('invitation', 0, 5)" title="ចុះក្រោម (Down)">⬇️</button>
+                </div>
+                <div class="pab-sliders">
+                  <div class="pab-row">
+                    <span class="pab-lbl">↕️ លើ/ក្រោម:</span>
+                    <input type="range" class="pab-range" id="slider_y_invitation" min="0" max="100" value="50" oninput="onPhotoSliderChange('invitation', 'y', this.value)" />
+                    <span class="pab-num" id="val_y_invitation">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">↔️ ឆ្វេង/ស្តាំ:</span>
+                    <input type="range" class="pab-range" id="slider_x_invitation" min="0" max="100" value="50" oninput="onPhotoSliderChange('invitation', 'x', this.value)" />
+                    <span class="pab-num" id="val_x_invitation">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">🔍 Zoom:</span>
+                    <input type="range" class="pab-range" id="slider_scale_invitation" min="10" max="25" value="10" oninput="onPhotoSliderChange('invitation', 'scale', this.value / 10)" />
+                    <span class="pab-num" id="val_scale_invitation">1.0x</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pc-desc">រូបថតគូស្នេហ៍ក្នុងទម្រង់រាងក្លោងទ្វារ Arch ក្បែរសេចក្តីអញ្ជើញ (3:4)</div>
+            <div class="pc-actions">
+              <input type="file" id="file_invitation" accept="image/*" style="display:none;" />
+              <button class="btn btn-secondary btn-sm" type="button" onclick="document.getElementById('file_invitation').click()">📤 Upload</button>
+              <button class="btn btn-danger btn-sm" type="button" onclick="removePhoto('invitation')">🗑️</button>
+            </div>
+          </div>
+
+          <!-- 5. Candle Romantic -->
+          <div class="photo-card" data-key="candle">
+            <div class="pc-header">
+              <div class="pc-title">🕯️ រាត្រី & ពន្លឺទៀន (Candlelight)</div>
+              <span class="badge badge-pos">Romantic Break</span>
+            </div>
+            <div class="pc-preview-wrap">
+              <div class="pc-thumb" id="thumb_candle"></div>
+            </div>
+            <div class="photo-adjust-box" id="adjust_box_candle">
+              <div class="pab-header">
+                <span class="pab-title">📐 តម្រឹមទីតាំង (Position)</span>
+                <button type="button" class="btn btn-secondary btn-xs btn-pab-center" onclick="centerPhoto('candle')" title="កំណត់ទៅកណ្តាល">🎯 កណ្តាល (Center)</button>
+              </div>
+              <div class="pab-controls">
+                <div class="pab-dpad">
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('candle', 0, -5)" title="ឡើងលើ (Up)">⬆️</button>
+                  <div class="pab-dpad-mid">
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('candle', -5, 0)" title="ទៅឆ្វេង (Left)">⬅️</button>
+                    <button type="button" class="btn-dpad btn-dpad-center" onclick="centerPhoto('candle')" title="កណ្តាល (Center)">🎯</button>
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('candle', 5, 0)" title="ទៅស្តាំ (Right)">➡️</button>
+                  </div>
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('candle', 0, 5)" title="ចុះក្រោម (Down)">⬇️</button>
+                </div>
+                <div class="pab-sliders">
+                  <div class="pab-row">
+                    <span class="pab-lbl">↕️ លើ/ក្រោម:</span>
+                    <input type="range" class="pab-range" id="slider_y_candle" min="0" max="100" value="50" oninput="onPhotoSliderChange('candle', 'y', this.value)" />
+                    <span class="pab-num" id="val_y_candle">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">↔️ ឆ្វេង/ស្តាំ:</span>
+                    <input type="range" class="pab-range" id="slider_x_candle" min="0" max="100" value="50" oninput="onPhotoSliderChange('candle', 'x', this.value)" />
+                    <span class="pab-num" id="val_x_candle">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">🔍 Zoom:</span>
+                    <input type="range" class="pab-range" id="slider_scale_candle" min="10" max="25" value="10" oninput="onPhotoSliderChange('candle', 'scale', this.value / 10)" />
+                    <span class="pab-num" id="val_scale_candle">1.0x</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pc-desc">រូបភាពផ្ទាំងរាត្រីរ៉ូមែនទិក ក្រោមពន្លឺទៀនយ៉ាងស្រទន់ (16:9 / Landscape)</div>
+            <div class="pc-actions">
+              <input type="file" id="file_candle" accept="image/*" style="display:none;" />
+              <button class="btn btn-secondary btn-sm" type="button" onclick="document.getElementById('file_candle').click()">📤 Upload</button>
+              <button class="btn btn-danger btn-sm" type="button" onclick="removePhoto('candle')">🗑️</button>
+            </div>
+          </div>
+
+          <!-- 6. Thanks Photo -->
+          <div class="photo-card" data-key="thanks">
+            <div class="pc-header">
+              <div class="pc-title">🙏 ថ្លែងអំណរគុណ (Thank You)</div>
+              <span class="badge badge-pos">Closing Section</span>
+            </div>
+            <div class="pc-preview-wrap">
+              <div class="pc-thumb" id="thumb_thanks"></div>
+            </div>
+            <div class="photo-adjust-box" id="adjust_box_thanks">
+              <div class="pab-header">
+                <span class="pab-title">📐 តម្រឹមទីតាំង (Position)</span>
+                <button type="button" class="btn btn-secondary btn-xs btn-pab-center" onclick="centerPhoto('thanks')" title="កំណត់ទៅកណ្តាល">🎯 កណ្តាល (Center)</button>
+              </div>
+              <div class="pab-controls">
+                <div class="pab-dpad">
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('thanks', 0, -5)" title="ឡើងលើ (Up)">⬆️</button>
+                  <div class="pab-dpad-mid">
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('thanks', -5, 0)" title="ទៅឆ្វេង (Left)">⬅️</button>
+                    <button type="button" class="btn-dpad btn-dpad-center" onclick="centerPhoto('thanks')" title="កណ្តាល (Center)">🎯</button>
+                    <button type="button" class="btn-dpad" onclick="nudgePhoto('thanks', 5, 0)" title="ទៅស្តាំ (Right)">➡️</button>
+                  </div>
+                  <button type="button" class="btn-dpad" onclick="nudgePhoto('thanks', 0, 5)" title="ចុះក្រោម (Down)">⬇️</button>
+                </div>
+                <div class="pab-sliders">
+                  <div class="pab-row">
+                    <span class="pab-lbl">↕️ លើ/ក្រោម:</span>
+                    <input type="range" class="pab-range" id="slider_y_thanks" min="0" max="100" value="50" oninput="onPhotoSliderChange('thanks', 'y', this.value)" />
+                    <span class="pab-num" id="val_y_thanks">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">↔️ ឆ្វេង/ស្តាំ:</span>
+                    <input type="range" class="pab-range" id="slider_x_thanks" min="0" max="100" value="50" oninput="onPhotoSliderChange('thanks', 'x', this.value)" />
+                    <span class="pab-num" id="val_x_thanks">50%</span>
+                  </div>
+                  <div class="pab-row">
+                    <span class="pab-lbl">🔍 Zoom:</span>
+                    <input type="range" class="pab-range" id="slider_scale_thanks" min="10" max="25" value="10" oninput="onPhotoSliderChange('thanks', 'scale', this.value / 10)" />
+                    <span class="pab-num" id="val_scale_thanks">1.0x</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pc-desc">រូបភាពបិទបញ្ចប់កម្មវិធី និងពាក្យថ្លែងអំណរគុណភ្ញៀវកិត្តិយស</div>
+            <div class="pc-actions">
+              <input type="file" id="file_thanks" accept="image/*" style="display:none;" />
+              <button class="btn btn-secondary btn-sm" type="button" onclick="document.getElementById('file_thanks').click()">📤 Upload</button>
+              <button class="btn btn-danger btn-sm" type="button" onclick="removePhoto('thanks')">🗑️</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gallery / Photo Album Section -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 class="card-title"><span class="card-title-icon">🖼️</span> កម្រងរូបភាពអាពាហ៍ពិពាហ៍ (Wedding Gallery / Album)</h3>
+            <div>
+              <input type="file" id="file_gallery" accept="image/*" multiple style="display:none;" />
+              <button class="btn btn-primary btn-sm" type="button" onclick="document.getElementById('file_gallery').click()">➕ បន្ថែមរូបក្នុង Gallery (Upload Photos)</button>
+            </div>
+          </div>
+          <div class="gallery-admin-grid" id="galleryAdminGrid">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- ── Live Preview Section ──────────────────────────────── -->
+        <div class="card preview-section-card" id="livePreviewSection" style="margin-top: 1.5rem;">
+          <div class="preview-toolbar">
+            <div class="pt-title">
+              <span class="pt-icon">📱</span>
+              <div>
+                <strong>ទំព័រគំរូជាក់ស្តែង (Live Interactive Preview)</strong>
+                <div style="font-size:0.75rem; color:var(--text-muted);">ចុចលើស្រោមសំបុត្រដើម្បីមើលចលនាបើក និងរូបភាពដែលបាន Upload</div>
+              </div>
+            </div>
+            <div class="pt-controls">
+              <div class="pt-device-switcher">
+                <button class="pt-btn is-active" id="btnPreviewMobile" type="button">📱 Mobile (390px)</button>
+                <button class="pt-btn" id="btnPreviewDesktop" type="button">💻 Desktop (Full)</button>
+              </div>
+              <div class="pt-guest-pick">
+                <span style="font-size:0.8rem; color:var(--text-muted);">ភ្ញៀវ៖</span>
+                <select class="form-select form-select-sm" id="selectPreviewGuest" style="width: auto; min-width: 140px;">
+                  <option value="">(ទូទៅ / គ្មានឈ្មោះ)</option>
+                </select>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="btnReloadPreview" type="button" title="Refresh Preview">🔄 Refresh</button>
+              <a class="btn btn-secondary btn-sm" id="btnOpenTabPreview" href="/" target="_blank" rel="noopener" title="Open Fullscreen in New Tab">↗️ Fullscreen</a>
+            </div>
+          </div>
+
+          <div class="preview-stage-container">
+            <div class="device-mockup device-mockup--mobile" id="deviceMockup">
+              <div class="device-notch">
+                <div class="device-speaker"></div>
+                <div class="device-cam"></div>
+              </div>
+              <iframe class="preview-iframe" id="previewIframe" src="/?preview=1" title="Wedding Live Preview"></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal: Add / Edit Guest -->
+    <div class="modal-overlay" id="guestModal">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3 class="modal-title" id="modalGuestTitle">➕ បន្ថែមឈ្មោះភ្ញៀវថ្មី (Add Guest)</h3>
+          <button class="modal-close" id="btnCloseGuestModal" type="button">&times;</button>
+        </div>
+        <form id="formAddGuest">
+          <input type="hidden" id="editGuestIndex" value="-1" />
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">🆔 លេខសម្គាល់ / User ID (Guest ID)</label>
+              <input class="form-input" id="inputGuestId" placeholder="ឧ. 1, 2, G01, VIP-01 (ទុកទំនេរ = ស្វ័យប្រវត្តិ)" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ក្រុម (Category / Group)</label>
+              <select class="form-select" id="inputGuestGroup">
+                <option value="VIP">⭐ VIP</option>
+                <option value="សាច់ញាតិ">👨‍👩‍👧‍👦 សាច់ញាតិ (Family)</option>
+                <option value="មិត្តភក្តិ" selected>🤝 មិត្តភក្តិ (Friends)</option>
+                <option value="រួមការងារ">💼 រួមការងារ (Colleagues)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">ងារ និងឈ្មោះភ្ញៀវ (Title & Guest Name) *</label>
+            <input class="form-input" id="inputGuestName" placeholder="ឧ. ឯកឧត្តម សុខ សាន និងលោកជំទាវ" required />
+            <div class="form-hint">ឈ្មោះនេះនឹងបង្ហាញនៅលើស្រោមសំបុត្រ និងធៀបការឌីជីថល។</div>
+          </div>
+          <div class="grid-3">
+            <div class="form-group">
+              <label class="form-label">ចំនួនកៅអី (Pax / Seats)</label>
+              <input class="form-input" id="inputGuestPax" type="number" min="1" max="10" value="2" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">លេខតុ (Table / Seat)</label>
+              <input class="form-input" id="inputGuestTable" placeholder="ឧ. VIP 01 ឬ A-02" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">លេខទូរស័ព្ទ / Phone</label>
+              <input class="form-input" id="inputGuestPhone" placeholder="012 345 678" />
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.2rem;">
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('guestModal').classList.remove('is-open')">បោះបង់</button>
+            <button class="btn btn-primary" type="submit" id="btnSaveGuestModal">រក្សាទុក</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Bulk Import Guests -->
+    <div class="modal-overlay" id="bulkModal">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3 class="modal-title">📋 បញ្ចូលឈ្មោះភ្ញៀវច្រើននាក់ (Bulk Paste / Excel)</h3>
+          <button class="modal-close" id="btnCloseBulkModal" type="button">&times;</button>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ជ្រើសរើសក្រុមលំនាំដើម (Default Group for pasted names)</label>
+          <select class="form-select" id="bulkGroupSelect">
+            <option value="VIP">⭐ VIP</option>
+            <option value="សាច់ញាតិ">👨‍👩‍👧‍👦 សាច់ញាតិ</option>
+            <option value="មិត្តភក្តិ" selected>🤝 មិត្តភក្តិ</option>
+            <option value="រួមការងារ">💼 រួមការងារ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">បិទភ្ជាប់បញ្ជីឈ្មោះភ្ញៀវនៅទីនេះ (Bulk Paste from Excel / CSV / Text) *</label>
+          <textarea class="form-textarea" id="bulkTextarea" rows="8" placeholder="អាចបិទភ្ជាប់ (Copy-Paste) ពី Excel ឬសរសេរ៖
+1, ឯកឧត្តម និងលោកជំទាវ, VIP, VIP 01, 2
+2, លោក ចាន់ ពិសិដ្ឋ, សាច់ញាតិ, A-02, 2
+ឬទម្រង់ ID និងឈ្មោះ៖
+1 - ឯកឧត្តម និងលោកជំទាវ
+2 - លោក ចាន់ ពិសិដ្ឋ
+ឬគ្រាន់តែឈ្មោះ៖
+អ្នកនាង ម៉ាលី"></textarea>
+          <div class="form-hint">គាំទ្រទម្រង់ "ID, ឈ្មោះ", "ID - ឈ្មោះ", ឬចម្លងផ្ទាល់ពីជួរឈរ Excel/Google Sheets។</div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+          <button class="btn btn-secondary" type="button" onclick="document.getElementById('bulkModal').classList.remove('is-open')">បោះបង់</button>
+          <button class="btn btn-primary" id="btnDoBulkImport" type="button">បញ្ចូលឈ្មោះទាំងអស់</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Send Digital Wedding Invitation & Copy -->
+    <div class="modal-overlay" id="sendModal">
+      <div class="modal-card" style="max-width: 860px; width: 95%; max-height: 92vh; overflow-y: auto;">
+        <div class="modal-head" style="margin-bottom: 0.8rem;">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <span style="font-size:1.4rem;">💌</span>
+            <div>
+              <h3 class="modal-title" id="sendModalTitle">ផ្ញើធៀបការឌីជីថល (Send Digital Invitation)</h3>
+              <div style="font-size:0.75rem; color:var(--text-muted);" id="sendModalSubtitle">សម្រាប់ភ្ញៀវ៖ ...</div>
+            </div>
+          </div>
+          <button class="modal-close" id="btnCloseSendModal" type="button">&times;</button>
+        </div>
+
+        <!-- Quick Telegram / Direct Action Bar -->
+        <div style="display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1rem; padding:0.8rem 1rem; background:linear-gradient(135deg, rgba(2,132,199,0.12), rgba(212,175,55,0.08)); border:1px solid rgba(2,132,199,0.3); border-radius:10px; align-items:center; justify-content:space-between;">
+          <div style="display:flex; align-items:center; gap:0.65rem;">
+            <span style="font-size:1.5rem;">✈️</span>
+            <div>
+              <div style="font-weight:700; font-size:0.9rem; color:#f8fafc;" id="sendTelegramTargetLabel">Telegram Direct Chat</div>
+              <div style="font-size:0.75rem; color:#94a3b8;" id="sendTelegramPhoneLabel">បើក Telegram ផ្ញើផ្ទាល់</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+            <a class="btn btn-primary btn-sm" id="btnSendTelegramDirect" href="#" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #0284c7, #0369a1); border:none; padding:7px 16px; font-weight:700; font-size:0.82rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem; color:#fff; cursor:pointer;">
+              ✈️ បើក Telegram ផ្ទាល់
+            </a>
+            <a class="btn btn-secondary btn-sm" id="btnSendTelegramApp" href="#" target="_blank" rel="noopener noreferrer" style="border-color:#38bdf8; color:#38bdf8; font-size:0.8rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem; cursor:pointer;" title="បើកក្នុងកម្មវិធី Telegram Desktop ឬ Mobile App">
+              📱 Telegram App
+            </a>
+            <a class="btn btn-secondary btn-sm" id="btnSendTelegramShare" href="#" target="_blank" rel="noopener noreferrer" style="font-size:0.8rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem; cursor:pointer;" title="ជ្រើសរើស Contact ផ្ញើក្នុង Telegram ជាមួយសារស្រាប់">
+              ✈️ Telegram Share (Picker)
+            </a>
+          </div>
+        </div>
+
+        <!-- 2 Column Layout: Left Image Preview, Right Caption & Copy Tools -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1.25rem;">
+          <!-- Left: Personalized Invitation Card Image -->
+          <div style="display:flex; flex-direction:column; gap:0.6rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="form-label" style="margin:0; font-weight:700; color:#fff;">🖼️ រូបភាពធៀបការ (Invitation Image)</label>
+              <span style="font-size:0.72rem; color:var(--primary); font-weight:600;">✨ មានឈ្មោះភ្ញៀវស្រាប់</span>
+            </div>
+            <div style="background:#0b0f19; border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:10px; text-align:center; min-height:300px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+              <img id="sendCardPreviewImg" src="" alt="Invitation Preview" style="max-width:100%; max-height:380px; border-radius:6px; box-shadow:0 6px 16px rgba(0,0,0,0.5); object-fit:contain; border:1px solid rgba(212,175,55,0.3);" />
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem;">
+              <button class="btn btn-secondary btn-sm" id="btnCopyCardImage" type="button" style="border-color:#38bdf8; color:#38bdf8; font-weight:700; padding:6px 10px;">
+                📋 ចម្លងរូបភាព (Copy Image)
+              </button>
+              <button class="btn btn-secondary btn-sm" id="btnDownloadCardImage" type="button" style="border-color:#10b981; color:#34d399; font-weight:700; padding:6px 10px;">
+                ⬇️ ទាញយករូប (PNG)
+              </button>
+            </div>
+            <div style="font-size:0.73rem; color:#94a3b8; text-align:center; line-height:1.4;">
+              💡 ចុច <strong>"ចម្លងរូបភាព"</strong> រួចចុច <code>Ctrl + V</code> ដើម្បីបិទភ្ជាប់ (Paste) ក្នុង Telegram ឬ Messenger បានភ្លាមៗ!
+            </div>
+          </div>
+
+          <!-- Right: Ready Caption & Copy/Paste -->
+          <div style="display:flex; flex-direction:column; gap:0.6rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="form-label" style="margin:0; font-weight:700; color:#fff;">📝 សារអញ្ជើញ (Ready Caption)</label>
+              <button class="btn btn-sm btn-primary" id="btnCopyCaptionOnly" type="button" style="padding:3px 10px; font-size:0.76rem; font-weight:600;">
+                📋 ចម្លងសារ (Copy)
+              </button>
+            </div>
+            <textarea class="form-textarea" id="sendCaptionTextarea" rows="13" style="font-size:0.78rem; line-height:1.55; font-family:'Kantumruy Pro', sans-serif; resize:vertical; background:var(--surface-2); color:#f1f5f9;"></textarea>
+            <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+              <button class="btn btn-secondary btn-sm" id="btnCopyPersonalLink" type="button" style="flex:1;">
+                🔗 ចម្លង Link
+              </button>
+              <a class="btn btn-secondary btn-sm" id="btnOpenWebPreview" href="/" target="_blank" rel="noopener" style="flex:1; text-align:center;">
+                👁️ បើកមើលធៀប
+              </a>
+            </div>
+            <div style="margin-top:0.3rem; padding:0.6rem 0.8rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:8px; font-size:0.73rem; color:#94a3b8;">
+              📌 <strong>ចំណាំ៖</strong> ប្រសិនបើភ្ញៀវមិនប្រើ Telegram អ្នកអាចចុច <code>📋 ចម្លងសារ</code> និង <code>📋 ចម្លងរូបភាព</code> ដើម្បីផ្ញើតាម Messenger, WhatsApp, ឬ SMS បានយ៉ាងងាយស្រួល។
+            </div>
+          </div>
+        </div>
+
+        <!-- Hidden Canvas for dynamic invitation card rendering -->
+        <canvas id="sendCardCanvas" style="display:none;"></canvas>
+      </div>
+    </div>
+
+    <!-- Modal: Live Preview Modal (Can be triggered anywhere) -->
+    <div class="modal-overlay modal-preview-overlay" id="previewModal">
+      <div class="modal-card modal-card--preview">
+        <div class="modal-head">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <span style="font-size:1.2rem;">📱</span>
+            <h3 class="modal-title">Live Wedding Preview</h3>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <button class="btn btn-secondary btn-sm" id="btnModalRefresh" type="button">🔄 Refresh</button>
+            <a class="btn btn-secondary btn-sm" href="/" target="_blank" rel="noopener">↗️ Full View</a>
+            <button class="modal-close" id="btnClosePreviewModal" type="button">&times;</button>
+          </div>
+        </div>
+        <div class="modal-preview-stage">
+          <div class="device-mockup device-mockup--mobile" style="margin: 0 auto; height: 680px;">
+            <div class="device-notch"></div>
+            <iframe class="preview-iframe" id="modalPreviewIframe" src="/?preview=1" title="Live Preview Modal"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Admin Login Overlay Gate ──────────────────────────────── -->
+    <div class="login-overlay" id="loginOverlay">
+      <div class="login-card">
+        <div class="login-crest">
+          <div class="login-icon">🔒</div>
+        </div>
+        <h2 class="login-title">ផ្ទាំងសុវត្ថិភាព Admin</h2>
+        <p class="login-sub">សូមបញ្ចូលពាក្យសម្ងាត់ដើម្បីគ្រប់គ្រងធៀបការ</p>
+
+        <form id="formAdminLogin">
+          <div class="form-group" style="text-align: left;">
+            <label class="form-label">ពាក្យសម្ងាត់ (Admin Password)</label>
+            <div class="password-input-wrap">
+              <input class="form-input" id="inputAdminPassword" type="password" placeholder="••••••••" required autocomplete="current-password" autofocus />
+              <button class="btn-toggle-pwd" id="btnToggleLoginPwd" type="button" aria-label="Toggle Password">👁️</button>
+            </div>
+            <div class="login-hint" id="loginHint">🔑 ពាក្យសម្ងាត់ដំបូង៖ <code>admin123</code></div>
+          </div>
+
+          <div class="login-error" id="loginError" style="display:none;"></div>
+
+          <button class="btn btn-primary btn-block" id="btnLoginSubmit" type="submit" style="margin-top: 1rem; width:100%; justify-content:center; padding:0.65rem;">
+            🔓 ចូលផ្ទាំងគ្រប់គ្រង (Unlock Admin)
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Change Admin Password -->
+    <div class="modal-overlay" id="passwordModal">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3 class="modal-title">🔑 កំណត់ពាក្យសម្ងាត់ថ្មី (Set Admin Password)</h3>
+          <button class="modal-close" id="btnClosePasswordModal" type="button">&times;</button>
+        </div>
+        <form id="formChangePassword">
+          <div class="form-group">
+            <label class="form-label">ពាក្យសម្ងាត់បច្ចុប្បន្ន (Current Password) *</label>
+            <input class="form-input" id="inputOldPassword" type="password" placeholder="••••••••" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">ពាក្យសម្ងាត់ថ្មី (New Password) *</label>
+            <input class="form-input" id="inputNewPassword" type="password" placeholder="យ៉ាងតិច ៤ តួអក្សរ" minlength="4" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">បញ្ជាក់ពាក្យសម្ងាត់ថ្មី (Confirm New Password) *</label>
+            <input class="form-input" id="inputConfirmPassword" type="password" placeholder="បញ្ចូលពាក្យសម្ងាត់ថ្មីម្តងទៀត" minlength="4" required />
+          </div>
+          <div class="login-error" id="changePasswordError" style="display:none; margin-bottom: 0.8rem;"></div>
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.2rem;">
+            <button class="btn btn-secondary" type="button" onclick="document.getElementById('passwordModal').classList.remove('is-open')">បោះបង់</button>
+            <button class="btn btn-primary" type="submit">💾 រក្សាទុកពាក្យសម្ងាត់ថ្មី</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script type="module" src="./src/admin/admin.js"></script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="km">
+<head><meta charset="utf-8"><title>og</title></head>
+<body>
+  <script type="module">
+    import '@fontsource/moul/400.css';
+    import '@fontsource/moulpali/400.css';
+    import '@fontsource/pinyon-script/latin-400.css';
+    import './src/styles/base.css';
+    import './src/styles/logo.css';
+    import { wedding } from './src/data/wedding.js';
+    import { defsSVG, cornerSVG } from './src/components/ornaments.js';
+    import { logoHTML, fitLogo } from './src/components/logo.js';
+    import { applyPalette } from './src/lib/textures.js';
+    import { photoSrc } from './src/lib/photos.js';
+    applyPalette();
+    const photo = photoSrc(wedding.photos.cover, 1280);
+    document.body.innerHTML = defsSVG() + `
+      <div style="position:relative;width:1200px;height:630px;overflow:hidden;display:grid;place-items:center;text-align:center;
+        background:${photo ? `linear-gradient(rgba(14,13,9,.62),rgba(14,13,9,.78)), url(${photo}) center 30%/cover` : 'radial-gradient(ellipse at 50% 40%, #3a3f22, #15140e 70%)'}">
+        ${['tl','tr','bl','br'].map(p => cornerSVG(p).replace('class="corner', `style="position:absolute;width:150px;${p[0]==='t'?'top':'bottom'}:14px;${p[1]==='l'?'left':'right'}:14px" class="corner`)).join('')}
+        <div>
+          <div style="font-family:var(--f-moul);font-size:34px;line-height:1.8"><span class="foil">សិរីសួស្តីអាពាហ៍ពិពាហ៍</span></div>
+          <div style="--logo-w:340px;padding-bottom:30px">${logoHTML()}</div>
+          <div style="font-family:var(--f-script);font-size:44px;color:#e7d29b;line-height:1.2;margin-top:6px">${wedding.groom.en} &amp; ${wedding.bride.en}</div>
+        </div>
+      </div>`;
+    document.body.style.margin = 0;
+    document.querySelectorAll('.nlogo').forEach(fitLogo);
+    document.fonts.ready.then(() => setTimeout(() => (window.__ogReady = true), 300));
+  </script>
+</body>
+</html>
